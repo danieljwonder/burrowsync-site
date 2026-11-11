@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BurrowSync: sync WordPress with X, Farcaster and Nostr</title>
+<meta name="description" content="BurrowSync is a family of WordPress plugins that sync your site with X, Farcaster and Nostr, both ways. Your site stays the home base. Every network stays connected.">
+<meta property="og:title" content="BurrowSync: sync WordPress with X, Farcaster and Nostr">
+<meta property="og:description" content="WordPress plugins that sync your site with X, Farcaster and Nostr, both ways. Your site is the home base.">
+<meta property="og:url" content="https://burrowsync.com/">
+<meta property="og:image" content="https://burrowsync.com/assets/sync-flow.webp">
+<link rel="icon" type="image/svg+xml" href="assets/burrowsync-icon.svg">
+<style>
+  :root{
+    --bg:#f8efe7; --fg:#2c232e; --muted:#72696d; --line:#d3c9c3;
+    --card:#fdf7f1; --accent:#e14775; --accent2:#269d69; --accent3:#1c8ca8; --accent4:#cc7a0a; --accent5:#7058be;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#272822; --fg:#f8f8f2; --muted:#a59f85; --line:#49483e; --card:#2f302a;
+      --accent:#f92672; --accent2:#a6e22e; --accent3:#66d9ef; --accent4:#fd971f; --accent5:#ae81ff; }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.6 var(--sans)}
+  a{color:inherit;text-decoration-color:var(--accent);text-underline-offset:3px}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+  .mono{font-family:var(--mono)}
+  .eyebrow{font:13px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+  header{padding:18px 0;border-bottom:1px solid var(--line)}
+  header .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px}
+  .logo{display:flex;align-items:center;gap:10px;font:600 18px var(--mono);text-decoration:none}
+  .logo svg{width:30px;height:30px}
+  nav{display:flex;gap:20px;font:14px var(--mono)}
+  nav a{text-decoration:none;color:var(--muted)} nav a:hover{color:var(--fg)}
+
+  .hero{padding:88px 0 56px}
+  .hero h1{font-size:clamp(40px,6.6vw,76px);line-height:1;letter-spacing:-.03em;margin:18px 0 24px;max-width:16ch}
+  .hero h1 em{font-style:normal;color:var(--accent)}
+  .hero p{font-size:21px;max-width:58ch;color:var(--muted);margin:0 0 32px}
+  .btns{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{font:15px var(--mono);padding:12px 18px;border:1px solid var(--fg);border-radius:999px;text-decoration:none}
+  .btn.primary{background:var(--fg);color:var(--bg)}
+
+  .flow{margin:0 auto;padding-bottom:72px}
+  .flow img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:16px}
+  .flow figcaption{font:13px var(--mono);color:var(--muted);margin-top:12px}
+
+  section{padding:72px 0;border-top:1px solid var(--line)}
+  h2{font-size:clamp(28px,4vw,40px);letter-spacing:-.02em;line-height:1.1;margin:12px 0 16px}
+  .lede{color:var(--muted);max-width:60ch;margin:0 0 40px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;display:flex;flex-direction:column}
+  .card h3{margin:10px 0 8px;font-size:22px}
+  .card p{margin:0 0 16px;color:var(--muted);font-size:16px}
+  .card ul{margin:0 0 20px;padding-left:18px;font-size:15px}
+  .card li{margin:4px 0}
+  .card .foot{margin-top:auto;font:13px var(--mono);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .pill{font:12px var(--mono);border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--muted);display:inline-block;text-decoration:none}
+  .pill.live{border-color:var(--accent2);color:var(--accent2)}
+  .tag{font:13px var(--mono)}
+  .x{color:var(--accent3)} .fc{color:var(--accent5)} .ns{color:var(--accent4)} .wb{color:var(--accent)}
+
+  .theme{display:grid;grid-template-columns:2fr 1fr;gap:32px;align-items:start}
+  .theme ul{margin:0;padding-left:18px;font-size:15px}
+  .theme-foot{display:flex;flex-direction:column;gap:12px;align-items:flex-start;font:13px var(--mono);padding-top:8px}
+  @media (max-width:720px){.theme{grid-template-columns:1fr}}
+  .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px}
+  .rules h3{font-size:18px;margin:0 0 6px}
+  .rules p{margin:0;color:var(--muted);font-size:16px}
+  .rules .n{font:13px var(--mono);color:var(--accent)}
+
+  .callout{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--accent4);border-radius:8px;padding:18px 22px;margin-top:24px;font-size:16px;color:var(--muted)}
+
+  footer{padding:40px 0 56px;border-top:1px solid var(--line);font:14px var(--mono);color:var(--muted)}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+  footer .logo{font-size:14px;font-weight:400}
+  footer .logo svg{width:20px;height:20px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="#" aria-label="BurrowSync home">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><ellipse cx="12" cy="16.6" rx="9.5" ry="3.4" fill="none" stroke="currentColor" stroke-width="1.5"/><ellipse cx="9.2" cy="8" rx="1.7" ry="5.2" transform="rotate(-16 9.2 8)" fill="currentColor"/><ellipse cx="14.8" cy="8" rx="1.7" ry="5.2" transform="rotate(16 14.8 8)" fill="currentColor"/><path d="M6.8 16.6a5.2 5.2 0 0 1 10.4 0a5.2 1.7 0 0 1 -10.4 0z" fill="currentColor"/></svg>
+      BurrowSync
+    </a>
+    <nav>
+      <a href="#plugins">plugins</a>
+      <a href="#theme">theme</a>
+      <a href="#rules">rules</a>
+      <a href="#support">support</a>
+      <a href="https://github.com/danieljwonder">github</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <div class="eyebrow">WordPress plugins</div>
+    <h1>Sync WordPress with <em>X, Farcaster and Nostr.</em></h1>
+    <p>BurrowSync is a family of WordPress plugins that connect your site to the social networks, both ways. Post on a network and it lands on your site. Publish on your site and it goes out everywhere. Your site is the home base, and every network stays connected to it.</p>
+    <div class="btns">
+      <a class="btn primary" href="#plugins">See the plugins</a>
+      <a class="btn" href="#support">Support the project</a>
+    </div>
+  </div>
+
+  <figure class="wrap flow">
+    <img src="assets/sync-flow.webp" width="1752" height="897" alt="Diagram: your WordPress site at the centre, with two-way sync connections to X, Farcaster and Nostr.">
+    <figcaption>Every plugin syncs to the same WordPress note post type and records where each note came from.</figcaption>
+  </figure>
+
+  <section id="plugins">
+    <div class="wrap">
+      <div class="eyebrow">The family</div>
+      <h2>Connect the networks you use.</h2>
+      <p class="lede">Free, GPL-licensed, no lock-in. Each plugin works on its own, and they all work together. All three are in public beta: test on a staging site before relying on them.</p>
+
+      <div class="grid">
+        <article class="card">
+          <span class="tag x">WordPress ⇄ X</span>
+          <h3>BurrowSync for X</h3>
+          <p>Two-way sync between your notes and one X account, using the official X API.</p>
+          <ul>
+            <li>Your posts arrive in full: text, timestamps, real links, photos</li>
+            <li>Notes publish to X, with X Premium long-post support</li>
+            <li>OAuth 2.0 PKCE, with secrets encrypted at rest</li>
+            <li>One-off import to backfill your recent posts</li>
+          </ul>
+          <div class="foot"><span class="pill live">v0.9.0 beta · GPL-2.0</span><span><a href="https://github.com/danieljwonder/burrowsync-for-x/releases/download/v0.9.0/burrowsync-for-x-0.9.0.zip">download</a> · <a href="https://github.com/danieljwonder/burrowsync-for-x">github</a></span></div>
+        </article>
+
+        <article class="card">
+          <span class="tag fc">WordPress ⇄ Farcaster</span>
+          <h3>BurrowSync for Farcaster</h3>
+          <p>Two-way sync between your notes and your Farcaster account, via Neynar.</p>
+          <ul>
+            <li>Your casts become notes, with channel, images and a link back to the cast</li>
+            <li>Notes publish as casts, trimmed safely with a permalink</li>
+            <li>No dependencies: plain WordPress HTTP, no SDKs</li>
+          </ul>
+          <div class="foot"><span class="pill live">v0.9.0 beta · GPL-2.0</span><span><a href="https://github.com/danieljwonder/burrowsync-for-farcaster/releases/download/v0.9.0/burrowsync-for-farcaster-0.9.0.zip">download</a> · <a href="https://github.com/danieljwonder/burrowsync-for-farcaster">github</a></span></div>
+        </article>
+
+        <article class="card">
+          <span class="tag ns">WordPress ⇄ Nostr</span>
+          <h3>BurrowSync for Nostr</h3>
+          <p>Syncs your notes and posts with Nostr, both ways, and keeps a record of every relay that has each one.</p>
+          <ul>
+            <li>Short notes and long-form articles</li>
+            <li>Sign with a browser extension or a remote signer, so your key never touches the server</li>
+            <li>NIP-05 identity on your own domain</li>
+            <li>Every relay in your list is retried until it has your post; a relay health view shows which ones do</li>
+          </ul>
+          <div class="foot"><span class="pill live">v0.9.3 beta · GPL-2.0</span><span><a href="https://github.com/danieljwonder/burrowsync-for-nostr/releases/download/v0.9.3/burrowsync-for-nostr-0.9.3.zip">download</a> · <a href="https://github.com/danieljwonder/burrowsync-for-nostr">github</a></span></div>
+        </article>
+
+      </div>
+
+    </div>
+  </section>
+
+  <section id="theme">
+    <div class="wrap">
+      <div class="eyebrow">Optional: a theme that shows it off</div>
+      <h2>Wonder Burrow</h2>
+      <div class="theme">
+        <div>
+          <p class="lede" style="margin-bottom:16px">The plugins work with any theme. Wonder Burrow is the one built around them: a block theme (an <a href="https://olliewp.com">Ollie</a> child theme) that puts posts and notes in a single archive and lets readers see where every note came from.</p>
+          <ul>
+            <li>Posts and notes interleaved by date</li>
+            <li>A source button on every entry: Nostr event, cast, or X post</li>
+            <li>Light and dark modes, monospace details</li>
+          </ul>
+        </div>
+        <div class="theme-foot">
+          <span class="pill live">v0.13.0 · GPL-2.0</span>
+          <a class="btn" href="https://github.com/danieljwonder/wonder-burrow/releases/latest">Download theme</a>
+          <a href="https://github.com/danieljwonder/wonder-burrow">github</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="rules">
+    <div class="wrap">
+      <div class="eyebrow">Ground rules</div>
+      <h2>What every connection promises.</h2>
+      <div class="rules">
+        <div><div class="n">01</div><h3>Your site is the origin</h3><p>The canonical copy lives on your domain. If a network changes the rules or disappears, your archive and your audience's way to find you don't.</p></div>
+        <div><div class="n">02</div><h3>No echoes</h3><p>A note that came from a network never goes back to it. Each note is marked with its origin, and duplicates are caught.</p></div>
+        <div><div class="n">03</div><h3>Provenance shows</h3><p>Every note knows where it came from, and your readers can see it too.</p></div>
+        <div><div class="n">04</div><h3>Nothing required</h3><p>No plugin depends on another. Connect one network or all of them.</p></div>
+      </div>
+    </div>
+  </section>
+  <section id="support">
+    <div class="wrap">
+      <div class="eyebrow">Value for value</div>
+      <h2>Free to use. Worth something to you?</h2>
+      <p class="lede">BurrowSync is free and stays free. If it saves you time, send some back.</p>
+      <div class="rules">
+        <div><div class="n">⚡</div><h3>Zap it</h3><p>Lightning tips to <code>zap@danielwonder.com</code>, or zap any note on Nostr.</p></div>
+        <div><div class="n">★</div><h3>Sponsor on GitHub</h3><p>Monthly or one-off, at <a href="https://github.com/sponsors/danieljwonder">github.com/sponsors/danieljwonder</a>.</p></div>
+        <div><div class="n">🛠</div><h3>Want it set up for you?</h3><p>Site wired to X, Farcaster and Nostr, done properly. <a href="https://github.com/danieljwonder">Get in touch</a>.</p></div>
+        <div><div class="n">🐛</div><h3>Found a bug?</h3><p>Open an issue on the plugin's GitHub repo. Bug reports are value too.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><ellipse cx="12" cy="16.6" rx="9.5" ry="3.4" fill="none" stroke="currentColor" stroke-width="1.5"/><ellipse cx="9.2" cy="8" rx="1.7" ry="5.2" transform="rotate(-16 9.2 8)" fill="currentColor"/><ellipse cx="14.8" cy="8" rx="1.7" ry="5.2" transform="rotate(16 14.8 8)" fill="currentColor"/><path d="M6.8 16.6a5.2 5.2 0 0 1 10.4 0a5.2 1.7 0 0 1 -10.4 0z" fill="currentColor"/></svg>
+      BurrowSync · every burrow connects to the warren
+    </span>
+    <span>made by <a href="https://github.com/danieljwonder">Daniel Wonder</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
